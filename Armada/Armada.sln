@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.329
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Armada", "Armada\Armada.csproj", "{A575BBC6-3401-44E1-B8C7-4B5C6AA61807}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Armada", "Armada\Armada.csproj", "{978C51E9-E8AA-4355-8337-BD93107E04D6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{A575BBC6-3401-44E1-B8C7-4B5C6AA61807}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A575BBC6-3401-44E1-B8C7-4B5C6AA61807}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A575BBC6-3401-44E1-B8C7-4B5C6AA61807}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A575BBC6-3401-44E1-B8C7-4B5C6AA61807}.Release|Any CPU.Build.0 = Release|Any CPU
+		{978C51E9-E8AA-4355-8337-BD93107E04D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{978C51E9-E8AA-4355-8337-BD93107E04D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{978C51E9-E8AA-4355-8337-BD93107E04D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{978C51E9-E8AA-4355-8337-BD93107E04D6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {16659EEC-C9C6-441C-9FEF-90C3B25F6DB1}
+		SolutionGuid = {A239DD8B-CCA4-4938-A7DA-D7AA743918D6}
 	EndGlobalSection
 EndGlobal
