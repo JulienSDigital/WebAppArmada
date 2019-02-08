@@ -14,8 +14,15 @@ namespace Armada.Models
         [Required]
         public string UserName { get; set; }
 
+        [Required]
+        public string Password { get; set; }
+
         public string Name { get; set; }
         public string Surname { get; set; }
+        // TODO : mettre une regExp
+
+        [Required]
+        public string Mail { get; set; }
 
         [DataType(DataType.MultilineText)]
         public string About { get; set; }
