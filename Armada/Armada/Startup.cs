@@ -39,7 +39,7 @@ namespace Armada
             {
                 app.UseHsts();
             }
-
+            app.UseStatusCodePages();
             app.UseHttpsRedirection();
             app.UseMvc();
         }
