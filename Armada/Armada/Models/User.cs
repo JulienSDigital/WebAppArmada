@@ -31,5 +31,7 @@ namespace Armada.Models
         [DisplayName("Created Date")]
         [DisplayFormat(DataFormatString = "{0:MM/dd/yy}")]
         public DateTime Birthday { get; set; }
+        public List<Message> Messages { get; set; } = new List<Message>();
+
     }
 }
