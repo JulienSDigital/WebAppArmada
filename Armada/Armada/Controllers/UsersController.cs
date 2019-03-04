@@ -16,11 +16,11 @@ namespace Armada.Controllers
         {
             var listUser = DataStore.Users;
 
-            JsonResult resultat = new JsonResult(listUser);
+            //JsonResult resultat = new JsonResult(listUser);
             
             //resultat.StatusCode = 404;
 
-            return Ok(resultat);
+            return Ok(listUser);
         }
         [HttpGet("{IdUser}")]
         public IActionResult GetUser(int idUser)
@@ -31,8 +31,8 @@ namespace Armada.Controllers
                 return NotFound();
             }
 
-            JsonResult resultat = new JsonResult(user);
-            return Ok(resultat);
+           
+            return Ok(user);
 
 
         }

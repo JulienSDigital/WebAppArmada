@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Armada.Database;
+using Armada.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,10 +22,10 @@ namespace Armada.Controllers
                 return NotFound();
             }
 
-            JsonResult resultat = new JsonResult(listMessages.Messages);
+            
             
 
-            return Ok(resultat);
+            return Ok(listMessages.Messages);
         }
         
         [HttpGet("{idUser}/messages/{idMessage}")]
@@ -37,14 +38,22 @@ namespace Armada.Controllers
             }
             var message = user.Messages.FirstOrDefault(m => m.MessageID == idMessage);
             if ( message == null)
-            {
+            {   
                 return NotFound();
             }
 
-            JsonResult resultat = new JsonResult(message);
-            return Ok(resultat);
+            
+            return Ok(message);
 
 
+        }
+        //
+        [HttpPost("{idUser}/message")]
+        public IActionResult CreateMessage(int idUser, [FromBody] MessageForCreationDto message)
+        {
+
+
+            return null;
         }
         
     }

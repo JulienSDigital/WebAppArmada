@@ -10,6 +10,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json.Serialization;
+using Microsoft.AspNetCore.Mvc.Formatters;
 
 namespace Armada
 {
@@ -25,7 +27,17 @@ namespace Armada
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+                /*  .AddJsonOptions(o =>
+                  {
+                      if (o.SerializerSettings.ContractResolver != null)
+                      {
+                          (o.SerializerSettings.ContractResolver as DefaultContractResolver).NamingStrategy = null;
+                      }
+                  }
+                  );
+                  */
+                .AddMvcOptions(o => o.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter()));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
