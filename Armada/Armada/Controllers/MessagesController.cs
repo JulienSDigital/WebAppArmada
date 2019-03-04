@@ -15,28 +15,37 @@ namespace Armada.Controllers
         [HttpGet("{idUser}/messages")]
         public IActionResult GetMessages(int idUser)
         {
-            var listMessages = DataStore.Users;
+            var listMessages = DataStore.Users.FirstOrDefault(u => u.UserID == idUser);
+            if (listMessages == null)
+            {
+                return NotFound();
+            }
 
-            JsonResult resultat = new JsonResult(listMessages);
-            //resultat.StatusCode = 404;
+            JsonResult resultat = new JsonResult(listMessages.Messages);
+            
 
-            return resultat;
+            return Ok(resultat);
         }
-        /*
-        [HttpGet("{IdUser}")]
-        public IActionResult GetMessage(int idMessage)
+        
+        [HttpGet("{idUser}/messages/{idMessage}")]
+        public IActionResult GetMessage(int idUser, int idMessage)
         {
             var user = DataStore.Users.FirstOrDefault(u => u.UserID == idUser);
             if (user == null)
             {
                 return NotFound();
             }
+            var message = user.Messages.FirstOrDefault(m => m.MessageID == idMessage);
+            if ( message == null)
+            {
+                return NotFound();
+            }
 
-            JsonResult resultat = new JsonResult(user);
-            return resultat;
+            JsonResult resultat = new JsonResult(message);
+            return Ok(resultat);
 
 
         }
-        */
+        
     }
 }
