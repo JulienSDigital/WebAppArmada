@@ -27,6 +27,8 @@ namespace Armada.Migrations
 
                     b.Property<string>("Content");
 
+                    b.Property<DateTime>("MessageDateCreate");
+
                     b.Property<int?>("UserID");
 
                     b.HasKey("MessageID");
@@ -46,9 +48,13 @@ namespace Armada.Migrations
 
                     b.Property<DateTime>("Birthday");
 
-                    b.Property<string>("Mail");
+                    b.Property<string>("Mail")
+                        .IsRequired();
 
                     b.Property<string>("Name");
+
+                    b.Property<string>("Password")
+                        .IsRequired();
 
                     b.Property<string>("Surname");
 
