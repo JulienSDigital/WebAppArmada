@@ -9,10 +9,11 @@ namespace Armada.Models
     public class MessageForCreationDto
     {
        
-
+        [Required]
         public DateTime MessageDateCreate { get; set; }
 
         //[DataType(DataType.MultilineText)]
+        //[Required(ErrorMessage = "Ah dommage")]
         public string Content { get; set; }
     }
 }
