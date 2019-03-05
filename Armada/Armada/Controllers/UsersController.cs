@@ -36,7 +36,7 @@ namespace Armada.Controllers
         [HttpGet("{IdUser}")]
         public IActionResult GetUser(int idUser)
         {
-            var user = DataStore.Users.FirstOrDefault(u => u.UserID == idUser);
+            var user = _repository.GetUser(idUser);
             if (user == null)
             {
                 return NotFound();

@@ -14,5 +14,6 @@ namespace Armada.Services
         Message GetMessage(int idUser, int idMessage);
         void AddMessage(int idUser, Message message);
         void DeleteMessage(Message message);
+        bool UserExists(int idUser);
     }
 }

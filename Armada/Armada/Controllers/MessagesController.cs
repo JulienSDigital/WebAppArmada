@@ -31,32 +31,30 @@ namespace Armada.Controllers
         [HttpGet("{idUser}/messages")]
         public IActionResult GetMessages(int idUser)
         {
-            var user = DataStore.Users.FirstOrDefault(u => u.UserID == idUser);
-            if (user == null)
+            if (!_repository.UserExists(idUser))
             {
                 _logger.LogInformation("Pas de user pour l'id" + idUser);
                 return NotFound();
             }
-            if (user.Messages == null)
+            var messages = _repository.GetMessages(idUser);
+            if (messages == null)
             {
                 _logger.LogInformation("Pas de messages pour l'id" + idUser);
                 return NotFound();
             }
-
-            
-
-            return Ok(user.Messages);
+            return Ok(messages);
         }
 
         [HttpGet("{idUser}/messages/{idMessage}", Name = nameof(GetMessage))]
         public IActionResult GetMessage(int idUser, int idMessage)
         {
-            var user = DataStore.Users.FirstOrDefault(u => u.UserID == idUser);
-            if (user == null)
+            if (!_repository.UserExists(idUser))
             {
+                _logger.LogInformation("Pas de user pour l'id" + idUser);
                 return NotFound();
             }
-            var message = user.Messages.FirstOrDefault(m => m.MessageID == idMessage);
+
+            var message = _repository.GetMessage( idMessage:idMessage, idUser:idUser);
             if (message == null)
             {
                 return NotFound();
