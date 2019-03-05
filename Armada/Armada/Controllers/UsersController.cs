@@ -1,5 +1,7 @@
 ﻿using Armada.Database;
+using Armada.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,10 +13,19 @@ namespace Armada.Controllers
     [ApiController]
     public class UsersController : Controller
     {
+        private ILogger<MessagesController> _logger;
+        private IArmadaRepository _repository;
+
+        public UsersController(ILogger<MessagesController> logger, IArmadaRepository repository)
+        {
+            _logger = logger;
+            _repository = repository;
+        }
+
         [HttpGet()]
         public IActionResult GetUsers()
         {
-            var listUser = DataStore.Users;
+            var listUser = _repository.GetUsers();
 
             //JsonResult resultat = new JsonResult(listUser);
             

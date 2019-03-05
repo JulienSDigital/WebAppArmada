@@ -14,6 +14,7 @@ using Newtonsoft.Json.Serialization;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using NLog.Extensions.Logging;
 using Armada.Services;
+using Armada.Database;
 
 namespace Armada
 {
@@ -45,11 +46,13 @@ namespace Armada
 #else
             services.AddTransient<IMailService, CloudMailService>();
 #endif
+            services.AddScoped<IArmadaRepository, ArmadaRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            new ArmadaContext().Init();
             loggerFactory.AddConsole();
             //loggerFactory.AddProvider(new NLog.Extensions.Logging.NLogLoggerProvider());
             loggerFactory.AddNLog();

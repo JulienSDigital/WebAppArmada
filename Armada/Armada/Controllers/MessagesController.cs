@@ -19,11 +19,13 @@ namespace Armada.Controllers
     {
         private ILogger<MessagesController> _logger;
         private IMailService _mail;
+        private IArmadaRepository _repository;
 
-        public MessagesController(ILogger <MessagesController> logger, IMailService mail)
+        public MessagesController(ILogger <MessagesController> logger, IMailService mail, IArmadaRepository repository)
         {
             _logger = logger;
             _mail = mail;
+            _repository = repository;
         }
 
         [HttpGet("{idUser}/messages")]
