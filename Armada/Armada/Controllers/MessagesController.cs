@@ -5,9 +5,11 @@ using System.Threading.Tasks;
 using Armada.Database;
 using Armada.Entities;
 using Armada.Models;
+using Armada.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Armada.Controllers
 {
@@ -15,19 +17,33 @@ namespace Armada.Controllers
     [ApiController]
     public class MessagesController : ControllerBase
     {
+        private ILogger<MessagesController> _logger;
+        private IMailService _mail;
+
+        public MessagesController(ILogger <MessagesController> logger, IMailService mail)
+        {
+            _logger = logger;
+            _mail = mail;
+        }
+
         [HttpGet("{idUser}/messages")]
         public IActionResult GetMessages(int idUser)
         {
-            var listMessages = DataStore.Users.FirstOrDefault(u => u.UserID == idUser);
-            if (listMessages == null)
+            var user = DataStore.Users.FirstOrDefault(u => u.UserID == idUser);
+            if (user == null)
             {
+                _logger.LogInformation("Pas de user pour l'id" + idUser);
+                return NotFound();
+            }
+            if (user.Messages == null)
+            {
+                _logger.LogInformation("Pas de messages pour l'id" + idUser);
                 return NotFound();
             }
 
+            
 
-
-
-            return Ok(listMessages.Messages);
+            return Ok(user.Messages);
         }
 
         [HttpGet("{idUser}/messages/{idMessage}", Name = nameof(GetMessage))]
@@ -77,6 +93,7 @@ namespace Armada.Controllers
             user.Messages.Add(createdMessage);
 
             //return Ok(message);
+            _mail.Send("Nouveau message", "Un nouveau message de crée : " + createdMessage.Content);
             return CreatedAtRoute(nameof(GetMessage), new { idUser = idUser, idMessage = createdMessage.MessageID }, createdMessage);
           
         }
