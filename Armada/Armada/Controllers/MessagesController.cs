@@ -30,7 +30,7 @@ namespace Armada.Controllers
             return Ok(listMessages.Messages);
         }
 
-        [HttpGet("{idUser}/messages/{idMessage}")]
+        [HttpGet("{idUser}/messages/{idMessage}", Name = nameof(GetMessage))]
         public IActionResult GetMessage(int idUser, int idMessage)
         {
             var user = DataStore.Users.FirstOrDefault(u => u.UserID == idUser);
@@ -49,8 +49,8 @@ namespace Armada.Controllers
 
 
         }
-        //
-        [HttpPost("{idUser}/message")]
+        
+        [HttpPost("{idUser}/messages")]
         public IActionResult CreateMessage(int idUser, [FromBody] MessageForCreationDto message)
         {
             var user = DataStore.Users.FirstOrDefault(u => u.UserID == idUser);
@@ -73,13 +73,14 @@ namespace Armada.Controllers
             createdMessage.Content = message.Content;
             createdMessage.MessageDateCreate = message.MessageDateCreate;
             createdMessage.MessageID = 5; //TODO a faire pour la BDD
-            createdMessage.User = user;
+            //createdMessage.User = user;
             user.Messages.Add(createdMessage);
 
-            return Ok(message);
-            //return CreatedAtRoute("GetMessage", new {  idUser = idUser, idMessage = createdMessage.MessageID }, createdMessage );
+            //return Ok(message);
+            return CreatedAtRoute(nameof(GetMessage), new { idUser = idUser, idMessage = createdMessage.MessageID }, createdMessage);
+          
         }
-        [HttpPut("{idUser}/message/{idMessage}")]
+        [HttpPut("{idUser}/messages/{idMessage}")]
         public IActionResult UpdateMessage(int idUser, int idMessage, [FromBody] MessageForCreationDto message)
         {
             var user = DataStore.Users.FirstOrDefault(u => u.UserID == idUser);
@@ -100,7 +101,7 @@ namespace Armada.Controllers
 
             return NoContent();
         }
-        [HttpPatch("{idUser}/message/{idMessage}")]
+        [HttpPatch("{idUser}/messages/{idMessage}")]
         public IActionResult UpdatePartiallyMessage(int idUser, int idMessage, [FromBody] JsonPatchDocument<Message> patchDocument)
         {
             var user = DataStore.Users.FirstOrDefault(u => u.UserID == idUser);
@@ -137,7 +138,7 @@ namespace Armada.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{idUser}/message/{idMessage}")]
+        [HttpDelete("{idUser}/messages/{idMessage}")]
         public IActionResult DeleteMessage(int idUser, int idMessage)
         {
             var user = DataStore.Users.FirstOrDefault(u => u.UserID == idUser);
