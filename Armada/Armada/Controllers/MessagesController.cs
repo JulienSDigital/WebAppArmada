@@ -69,11 +69,14 @@ namespace Armada.Controllers
         [HttpPost("{idUser}/messages")]
         public IActionResult CreateMessage(int idUser, [FromBody] MessageForCreationDto message)
         {
-            var user = DataStore.Users.FirstOrDefault(u => u.UserID == idUser);
-            if (user == null)
+            if (!_repository.UserExists(idUser))
             {
+                _logger.LogInformation("Pas de user pour l'id" + idUser);
                 return NotFound();
             }
+
+            var user = _repository.GetUser(idUser, false);
+
 
             if (message.MessageDateCreate.Year < 2019)
             {
@@ -88,69 +91,73 @@ namespace Armada.Controllers
             var createdMessage = new Message();
             createdMessage.Content = message.Content;
             createdMessage.MessageDateCreate = message.MessageDateCreate;
-            createdMessage.MessageID = 5; //TODO a faire pour la BDD
-            //createdMessage.User = user;
-            user.Messages.Add(createdMessage);
+            _repository.AddMessage(idUser, createdMessage);
+            _repository.Save();
 
-            //return Ok(message);
             _mail.Send("Nouveau message", "Un nouveau message de crée : " + createdMessage.Content);
             return CreatedAtRoute(nameof(GetMessage), new { idUser = idUser, idMessage = createdMessage.MessageID }, createdMessage);
           
         }
         [HttpPut("{idUser}/messages/{idMessage}")]
         public IActionResult UpdateMessage(int idUser, int idMessage, [FromBody] MessageForCreationDto message)
-        {
-            var user = DataStore.Users.FirstOrDefault(u => u.UserID == idUser);
-            if (user == null)
+        { 
+            if (!_repository.UserExists(idUser))
+            {
+                _logger.LogInformation("Pas de user pour l'id" + idUser);
+                return NotFound();
+            }
+
+            var user = _repository.GetUser(idUser, false);
+
+            if (!_repository.MessageExists(idUser, idMessage))
             {
                 return NotFound();
             }
 
-            var checkMessage = user.Messages.FirstOrDefault(m => m.MessageID == idMessage);
-            if (checkMessage == null)
-            {
-                return NotFound();
-            }
+            var currentMessage = _repository.GetMessage(idUser, idMessage);
 
-            checkMessage.Content = message.Content;
-            checkMessage.MessageDateCreate = message.MessageDateCreate;
-
+            currentMessage.Content = message.Content;
+            currentMessage.MessageDateCreate = message.MessageDateCreate;
+            _repository.Save();
 
             return NoContent();
         }
         [HttpPatch("{idUser}/messages/{idMessage}")]
         public IActionResult UpdatePartiallyMessage(int idUser, int idMessage, [FromBody] JsonPatchDocument<Message> patchDocument)
         {
-            var user = DataStore.Users.FirstOrDefault(u => u.UserID == idUser);
-            if (user == null)
+            if (!_repository.UserExists(idUser))
+            {
+                _logger.LogInformation("Pas de user pour l'id" + idUser);
+                return NotFound();
+            }
+
+            var user = _repository.GetUser(idUser, false);
+
+            if (!_repository.MessageExists(idUser, idMessage))
             {
                 return NotFound();
             }
 
-            var currentMessage = user.Messages.FirstOrDefault(m => m.MessageID == idMessage);
+            var currentMessage = _repository.GetMessage(idUser, idMessage);
+
             var saveOldMessage = new Message();
             saveOldMessage.Content = currentMessage.Content;
             saveOldMessage.MessageDateCreate = currentMessage.MessageDateCreate;
-            if (currentMessage == null)
-            {
-                return NotFound();
-            }
-
-
-
-
+            
             patchDocument.ApplyTo(currentMessage, ModelState);
 
             if (currentMessage.MessageDateCreate.Year < 2019)
             {
                 currentMessage.MessageDateCreate = saveOldMessage.MessageDateCreate;
                 ModelState.AddModelError("year", "L'année n'est pas bonne");
-
             }
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+
+            _repository.Save();
 
             return NoContent();
         }
@@ -158,18 +165,24 @@ namespace Armada.Controllers
         [HttpDelete("{idUser}/messages/{idMessage}")]
         public IActionResult DeleteMessage(int idUser, int idMessage)
         {
-            var user = DataStore.Users.FirstOrDefault(u => u.UserID == idUser);
-            if (user == null)
+            if (!_repository.UserExists(idUser))
             {
+                _logger.LogInformation("Pas de user pour l'id" + idUser);
                 return NotFound();
             }
-            var currentMessage = user.Messages.FirstOrDefault(m => m.MessageID == idMessage);
-            if (currentMessage == null)
+            var user = _repository.GetUser(idUser, true);
+
+
+            if (! _repository.MessageExists(idUser,idMessage))
             {
                 return NotFound();
             }
 
-            user.Messages.Remove(currentMessage);
+            var currentMessage = _repository.GetMessage(idUser, idMessage);
+
+
+            _repository.DeleteMessage(currentMessage);
+            _repository.Save();
             return NoContent();
 
         }

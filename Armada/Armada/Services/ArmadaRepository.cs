@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Armada.Database;
 using Armada.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Armada.Services
 {
@@ -11,12 +12,13 @@ namespace Armada.Services
     {
         public void AddMessage(int idUser, Message message)
         {
-            throw new NotImplementedException();
+            var user = GetUser(idUser,false);
+            user.Messages.Add(message);
         }
 
         public void DeleteMessage(Message message)
         {
-            throw new NotImplementedException();
+            _ArmadaContext.Messages.Remove(message);
         }
 
         public Message GetMessage(int idUser, int idMessage)
@@ -45,20 +47,37 @@ namespace Armada.Services
         
         ArmadaContext _ArmadaContext = new ArmadaContext();
 
-        public User GetUser(int idUser)
+        public User GetUser(int idUser, bool includeMessage)
         {
-            var user = _ArmadaContext.Users.FirstOrDefault(u => u.UserID == idUser);
-            return user;
+            if (includeMessage)
+            {
+                return _ArmadaContext.Users.Include(u => u.Messages).FirstOrDefault(u => u.UserID == idUser);
+            }
+            return _ArmadaContext.Users.FirstOrDefault(u => u.UserID == idUser);
         }
 
-        public IEnumerable<User> GetUsers()
+        public IEnumerable<User> GetUsers(bool includeMessage)
         {
+            if (includeMessage)
+            {
+                return _ArmadaContext.Users.Include(u => u.Messages);
+            }
             return _ArmadaContext.Users;
         }
 
         public bool UserExists(int idUser)
         {
-            return GetUser(idUser) != null;
+            return GetUser(idUser, false) != null;
+        }
+
+        public bool MessageExists(int idUser, int idMessage)
+        {
+            return GetMessage(idUser,idMessage) != null;
+        }
+
+        public void Save()
+        {
+            _ArmadaContext.SaveChanges();
         }
     }
 }

@@ -23,9 +23,9 @@ namespace Armada.Controllers
         }
 
         [HttpGet()]
-        public IActionResult GetUsers()
+        public IActionResult GetUsers(bool includeMessage = false)
         {
-            var listUser = _repository.GetUsers();
+            var listUser = _repository.GetUsers(includeMessage);
 
             //JsonResult resultat = new JsonResult(listUser);
             
@@ -34,9 +34,9 @@ namespace Armada.Controllers
             return Ok(listUser);
         }
         [HttpGet("{IdUser}")]
-        public IActionResult GetUser(int idUser)
+        public IActionResult GetUser(int idUser, bool includeMessage = false)
         {
-            var user = _repository.GetUser(idUser);
+            var user = _repository.GetUser(idUser,includeMessage);
             if (user == null)
             {
                 return NotFound();
