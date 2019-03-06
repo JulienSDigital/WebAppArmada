@@ -1,8 +1,10 @@
 ﻿using Armada.Entities;
+using Armada.Helper;
 using Armada.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace Armada.WebApiTest
 {
@@ -33,9 +35,9 @@ namespace Armada.WebApiTest
             throw new NotImplementedException();
         }
 
-        public IEnumerable<User> GetUsers(bool includeMessage)
+        public PagedList<User> GetUsers(bool includeMessage, Pagination pagination)
         {
-            return DataStore.Users;
+            return PagedList<User>.Create(DataStore.Users.AsQueryable<User>(), 1, 100);
         }
 
         public bool MessageExists(int idUser, int idMessage)

@@ -1,4 +1,5 @@
 using Armada.Controllers;
+using Armada.Helper;
 using Armada.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -20,10 +21,10 @@ namespace Armada.WebApiTest
         public void TestGetUsersResultOk()
         {
             //Arrange
-            var usersController = new UsersController(null, new ArmadaRepositoryFake());
+            var usersController = new UsersController(null, new ArmadaRepositoryFake(), new IUrlHelperFake());
 
             //Act
-            var result = usersController.GetUsers();
+            var result = usersController.GetUsers(new Pagination());
 
             //Assert
             Assert.IsInstanceOfType(result, typeof(OkObjectResult));

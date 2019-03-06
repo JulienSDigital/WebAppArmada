@@ -8,6 +8,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Armada.Models;
+using Armada.Helper;
+using Newtonsoft.Json;
 
 namespace Armada.Controllers
 {
@@ -17,15 +19,17 @@ namespace Armada.Controllers
     {
         private ILogger<MessagesController> _logger;
         private IArmadaRepository _repository;
-
-        public UsersController(ILogger<MessagesController> logger, IArmadaRepository repository)
+        private IUrlHelper _urlHelper;
+    
+        public UsersController(ILogger<MessagesController> logger, IArmadaRepository repository, IUrlHelper urlHelper)
         {
             _logger = logger;
             _repository = repository;
+            _urlHelper = urlHelper;
         }
 
-        [HttpGet()]
-        public IActionResult GetUsers(bool includeMessage = false)
+        [HttpGet(Name = nameof(GetUsers))]
+        public IActionResult GetUsers([FromQuery]Pagination pagination, bool includeMessage = false)
         {
             //Code manuel sans automapper
             //IEnumerable<Entities.User> listUser = _repository.GetUsers(includeMessage);
@@ -73,22 +77,30 @@ namespace Armada.Controllers
             //    return Ok(resultat);
 
             //}
+            OkObjectResult result;
 
-            
-            IEnumerable<Entities.User> listUser = _repository.GetUsers(includeMessage);
+
+            PagedList<Entities.User> listUser = _repository.GetUsers(includeMessage, pagination);
             if (includeMessage)
             {
-                var resultat = Mapper.Map<IEnumerable<UserDto>>(listUser);
-                
-                return Ok(resultat);
+                result = Ok(Mapper.Map<IEnumerable<UserDto>>(listUser));
             }
             else
             {
-                var resultat = Mapper.Map<IEnumerable<UserWithoutMessagesDto>>(listUser);
-
-                return Ok(resultat);
+                result = Ok(Mapper.Map<IEnumerable<UserWithoutMessagesDto>>(listUser));
             }
 
+            var paginationMetadata = new {
+                CurrentPage = listUser.CurrentPage,
+                TotalPages = listUser.TotalPages,
+                PageSize = listUser.PageSize,
+                TotalCount = listUser.TotalCount,
+                PreviousPageLink = listUser.HasPrevious ? CreateUserResourceUri(pagination, ResourceUriType.PreviousPage) : null,
+                NextPageLink = listUser.HasNext ? CreateUserResourceUri(pagination, ResourceUriType.NextPage) : null,
+            };
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(paginationMetadata));
+
+            return result;
 
             //pour retourner du json
             //JsonResult resultat = new JsonResult(listUser);
@@ -116,6 +128,43 @@ namespace Armada.Controllers
                 var resultat = Mapper.Map<UserWithoutMessagesDto>(user);
 
                 return Ok(resultat);
+            }
+        }
+
+        public enum ResourceUriType
+        {
+            PreviousPage,
+            NextPage
+        }
+
+        private string CreateUserResourceUri(
+           Pagination usersResourceParameters,
+           ResourceUriType type)
+        {
+            switch (type)
+            {
+                case ResourceUriType.PreviousPage:
+                    return _urlHelper.Link("GetUsers",
+                      new
+                      {
+                          pageNumber = usersResourceParameters.PageNumber - 1,
+                          pageSize = usersResourceParameters.PageSize
+                      });
+                case ResourceUriType.NextPage:
+                    return _urlHelper.Link("GetUsers",
+                      new
+                      {
+                          pageNumber = usersResourceParameters.PageNumber + 1,
+                          pageSize = usersResourceParameters.PageSize
+                      });
+
+                default:
+                    return _urlHelper.Link("GetUsers",
+                    new
+                    {
+                        pageNumber = usersResourceParameters.PageNumber,
+                        pageSize = usersResourceParameters.PageSize
+                    });
             }
         }
     }

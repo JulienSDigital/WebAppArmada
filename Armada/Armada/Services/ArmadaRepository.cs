@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Armada.Database;
 using Armada.Entities;
+using Armada.Helper;
 using Microsoft.EntityFrameworkCore;
 
 namespace Armada.Services
@@ -56,13 +57,19 @@ namespace Armada.Services
             return _ArmadaContext.Users.FirstOrDefault(u => u.UserID == idUser);
         }
 
-        public IEnumerable<User> GetUsers(bool includeMessage)
+        public PagedList<User> GetUsers(bool includeMessage, Pagination pagination)
         {
+            IQueryable<User> result;
+
             if (includeMessage)
             {
-                return _ArmadaContext.Users.Include(u => u.Messages);
+                result = _ArmadaContext.Users.Include(u => u.Messages);
+            } else
+            {
+                result = _ArmadaContext.Users;
             }
-            return _ArmadaContext.Users;
+
+            return PagedList<User>.Create(result, pagination.PageNumber, pagination.PageSize);
         }
 
         public bool UserExists(int idUser)

@@ -15,6 +15,8 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using NLog.Extensions.Logging;
 using Armada.Services;
 using Armada.Database;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Routing;
 
 namespace Armada
 {
@@ -47,6 +49,15 @@ namespace Armada
             services.AddTransient<IMailService, CloudMailService>();
 #endif
             services.AddScoped<IArmadaRepository, ArmadaRepository>();
+
+            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+
+            services.AddScoped<IUrlHelper>(implementationFactory =>
+            {
+                var actionContext = implementationFactory.GetService<IActionContextAccessor>()
+                .ActionContext;
+                return new UrlHelper(actionContext);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

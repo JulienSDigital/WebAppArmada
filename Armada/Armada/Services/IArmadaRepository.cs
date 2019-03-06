@@ -1,4 +1,5 @@
 ﻿using Armada.Entities;
+using Armada.Helper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ namespace Armada.Services
 {
     public interface IArmadaRepository
     {
-        IEnumerable<User> GetUsers(bool includeMessage);
+        PagedList<User> GetUsers(bool includeMessage, Pagination pagination);
         User GetUser(int idUser, bool includeMessage);
         IEnumerable<Message> GetMessages(int idUser);
         Message GetMessage(int idUser, int idMessage);
