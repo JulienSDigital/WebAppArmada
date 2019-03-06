@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Armada.Database
+namespace Armada.WebApiTest
 {
     public class DataStore
     {

@@ -6,6 +6,7 @@ using Armada.Database;
 using Armada.Entities;
 using Armada.Models;
 using Armada.Services;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -42,7 +43,7 @@ namespace Armada.Controllers
                 _logger.LogInformation("Pas de messages pour l'id" + idUser);
                 return NotFound();
             }
-            return Ok(messages);
+            return Ok(Mapper.Map<IEnumerable<MessageDto>>(messages));
         }
 
         [HttpGet("{idUser}/messages/{idMessage}", Name = nameof(GetMessage))]
@@ -60,10 +61,7 @@ namespace Armada.Controllers
                 return NotFound();
             }
 
-
-            return Ok(message);
-
-
+            return Ok(Mapper.Map<MessageDto>(message));
         }
         
         [HttpPost("{idUser}/messages")]
@@ -95,7 +93,7 @@ namespace Armada.Controllers
             _repository.Save();
 
             _mail.Send("Nouveau message", "Un nouveau message de crée : " + createdMessage.Content);
-            return CreatedAtRoute(nameof(GetMessage), new { idUser = idUser, idMessage = createdMessage.MessageID }, createdMessage);
+            return CreatedAtRoute(nameof(GetMessage), new { idUser = idUser, idMessage = createdMessage.MessageID }, Mapper.Map<MessageDto>(createdMessage));
           
         }
         [HttpPut("{idUser}/messages/{idMessage}")]
@@ -172,7 +170,6 @@ namespace Armada.Controllers
             }
             var user = _repository.GetUser(idUser, true);
 
-
             if (! _repository.MessageExists(idUser,idMessage))
             {
                 return NotFound();
@@ -180,11 +177,10 @@ namespace Armada.Controllers
 
             var currentMessage = _repository.GetMessage(idUser, idMessage);
 
-
             _repository.DeleteMessage(currentMessage);
             _repository.Save();
-            return NoContent();
 
+            return NoContent();
         }
     }
 }

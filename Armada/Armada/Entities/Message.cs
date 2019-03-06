@@ -15,9 +15,8 @@ namespace Armada.Entities
 
         public DateTime MessageDateCreate { get; set; }
 
-       // [ForeignKey("UserID")]
-  //todo réactiver
-        //public User User { get; set; }
+        [ForeignKey("UserID")]
+        public User User { get; set; }
         public int UserID { get; set; }
         
 

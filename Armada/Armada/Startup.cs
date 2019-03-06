@@ -64,9 +64,21 @@ namespace Armada
             {
                 app.UseHsts();
             }
+
+            SetUpAutoMapper();
+
             app.UseStatusCodePages();
             app.UseHttpsRedirection();
             app.UseMvc();
+        }
+
+        public static void SetUpAutoMapper()
+        {
+            AutoMapper.Mapper.Initialize(cfg => {
+                cfg.CreateMap<Entities.User, Models.UserDto>();
+                cfg.CreateMap<Entities.User, Models.UserWithoutMessagesDto>();
+                cfg.CreateMap<Entities.Message, Models.MessageDto>();
+            });
         }
     }
 }

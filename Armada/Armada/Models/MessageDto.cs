@@ -11,8 +11,7 @@ namespace Armada.Models
         public int MessageID { get; set; }
 
         public DateTime MessageDateCreate { get; set; }
-        public UserDto User { get; set; }
-       
+        
         [DataType(DataType.MultilineText)]
         public string Content { get; set; }
     }
