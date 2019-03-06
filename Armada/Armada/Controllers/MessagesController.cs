@@ -19,13 +19,11 @@ namespace Armada.Controllers
     public class MessagesController : ControllerBase
     {
         private ILogger<MessagesController> _logger;
-        private IMailService _mail;
         private IArmadaRepository _repository;
 
-        public MessagesController(ILogger <MessagesController> logger, IMailService mail, IArmadaRepository repository)
+        public MessagesController(ILogger <MessagesController> logger, IArmadaRepository repository)
         {
             _logger = logger;
-            _mail = mail;
             _repository = repository;
         }
 
@@ -34,13 +32,11 @@ namespace Armada.Controllers
         {
             if (!_repository.UserExists(idUser))
             {
-                _logger.LogInformation("Pas de user pour l'id" + idUser);
                 return NotFound();
             }
             var messages = _repository.GetMessages(idUser);
             if (messages == null)
             {
-                _logger.LogInformation("Pas de messages pour l'id" + idUser);
                 return NotFound();
             }
             return Ok(Mapper.Map<IEnumerable<MessageDto>>(messages));
@@ -51,7 +47,6 @@ namespace Armada.Controllers
         {
             if (!_repository.UserExists(idUser))
             {
-                _logger.LogInformation("Pas de user pour l'id" + idUser);
                 return NotFound();
             }
 
@@ -69,7 +64,6 @@ namespace Armada.Controllers
         {
             if (!_repository.UserExists(idUser))
             {
-                _logger.LogInformation("Pas de user pour l'id" + idUser);
                 return NotFound();
             }
 
@@ -79,7 +73,6 @@ namespace Armada.Controllers
             if (message.MessageDateCreate.Year < 2019)
             {
                 ModelState.AddModelError("year", "L'année n'est pas bonne");
-
             }
             if (!ModelState.IsValid)
             {
@@ -92,7 +85,6 @@ namespace Armada.Controllers
             _repository.AddMessage(idUser, createdMessage);
             _repository.Save();
 
-            _mail.Send("Nouveau message", "Un nouveau message de crée : " + createdMessage.Content);
             return CreatedAtRoute(nameof(GetMessage), new { idUser = idUser, idMessage = createdMessage.MessageID }, Mapper.Map<MessageDto>(createdMessage));
           
         }
@@ -101,7 +93,6 @@ namespace Armada.Controllers
         { 
             if (!_repository.UserExists(idUser))
             {
-                _logger.LogInformation("Pas de user pour l'id" + idUser);
                 return NotFound();
             }
 
@@ -125,7 +116,6 @@ namespace Armada.Controllers
         {
             if (!_repository.UserExists(idUser))
             {
-                _logger.LogInformation("Pas de user pour l'id" + idUser);
                 return NotFound();
             }
 
@@ -165,7 +155,6 @@ namespace Armada.Controllers
         {
             if (!_repository.UserExists(idUser))
             {
-                _logger.LogInformation("Pas de user pour l'id" + idUser);
                 return NotFound();
             }
             var user = _repository.GetUser(idUser, true);

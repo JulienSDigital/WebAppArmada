@@ -12,8 +12,8 @@ namespace Armada.Models
         [Required]
         public DateTime MessageDateCreate { get; set; }
 
-        //[DataType(DataType.MultilineText)]
-        //[Required(ErrorMessage = "Ah dommage")]
+        [DataType(DataType.MultilineText)]
+        [Required]
         public string Content { get; set; }
     }
 }
