@@ -10,6 +10,7 @@ using Armada.Services;
 using Armada.Database;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
+using Armada.Hubs;
 
 namespace Armada
 {
@@ -37,6 +38,13 @@ namespace Armada
                 .ActionContext;
                 return new UrlHelper(actionContext);
             });
+            services.AddCors(options => options.AddPolicy("CorsPolicy",
+            builder =>
+            {
+                builder.AllowAnyMethod().AllowAnyHeader()
+                       .WithOrigins( new string[] { "http://localhost:8103", "https://localhost:44339"})
+                       .AllowCredentials();
+            }));
 
             services.AddSignalR();
         }
@@ -59,7 +67,9 @@ namespace Armada
             SetUpAutoMapper();
 
             app.UseStatusCodePages();
+            app.UseStaticFiles();
             app.UseHttpsRedirection();
+            app.UseCors("CorsPolicy");
             app.UseSignalR(routes =>
             {
                 routes.MapHub<ArmadaHub>("/armadaHub");
