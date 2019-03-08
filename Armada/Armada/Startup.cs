@@ -37,6 +37,8 @@ namespace Armada
                 .ActionContext;
                 return new UrlHelper(actionContext);
             });
+
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -58,6 +60,10 @@ namespace Armada
 
             app.UseStatusCodePages();
             app.UseHttpsRedirection();
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<ArmadaHub>("/armadaHub");
+            });
             app.UseMvc();
         }
 
